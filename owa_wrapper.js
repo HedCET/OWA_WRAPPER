@@ -6,7 +6,7 @@ var future = require('fibers/future'),
  */
 
 var APP = function(opt) {
-  this.timeout = (opt.timeout ? opt.timeout : 1000 * 60);
+  this.timeout = (opt && opt.timeout ? opt.timeout : 1000 * 60);
 };
 
 /**
@@ -22,7 +22,7 @@ APP.prototype.attachment_download = function(opt, callback) {
     f;
 
   if (typeof callback !== 'function') {
-    f = new future
+    f = new future;
   }
 
   try {
