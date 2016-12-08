@@ -1,11 +1,11 @@
 # OWA WRAPPER
-HTTP based OWA API
+HTTP based Outlook Web Access API
 
 ### FEATURE
 
 # install
-with [npm](https://www.npmjs.com/package/OWA_WRAPPER) do:
+with [npm](https://www.npmjs.com/package/owa_wrapper) do:
 
 ```
-npm install OWA_WRAPPER
+npm install owa_wrapper
 ```

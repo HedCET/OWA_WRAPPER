@@ -1,14 +1,13 @@
 {
   "author": "ClayIP",
-  "description": "HTTP based OWA API",
+  "description": "HTTP based Outlook Web Access API",
   "dependencies": {
     "fibers": "^1.0.15",
-    "moment": "^2.17.0",
     "request": "^2.79.0"
   },
   "license": "MIT",
   "main": "owa_wrapper.js",
-  "name": "OWA_WRAPPER",
+  "name": "owa_wrapper",
   "scripts": {
     "test": "echo \"notFound\" && exit 1"
   },
@@ -16,5 +15,5 @@
     "type": "git",
     "url": "git+https://github.com/clayip/OWA_WRAPPER.git"
   },
-  "version": "1.0.0"
+  "version": "1.0.1"
 }
