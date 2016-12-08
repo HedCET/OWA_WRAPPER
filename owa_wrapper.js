@@ -98,7 +98,7 @@ APP.prototype.request = function(url, method, form) {
  * @param [String] opt.owa_url => https://mail.linto.com/owa
  * @param [String] opt.password
  * @param [String] opt.username
- * @return [Object] { error: error, res: res, body: body } (body => mail list in html)
+ * @return [Object] { error: error, res: res, body: body }
  */
 
 APP.prototype.sign_in = function(opt) {

@@ -1,6 +1,6 @@
 {
   "author": "ClayIP",
-  "description": "HTTP based Outlook Web Access API",
+  "description": "HTTP based Outlook Web Access for cheerio",
   "dependencies": {
     "fibers": "^1.0.15",
     "request": "^2.79.0"
@@ -15,5 +15,5 @@
     "type": "git",
     "url": "git+https://github.com/clayip/OWA_WRAPPER.git"
   },
-  "version": "1.0.1"
+  "version": "1.0.5"
 }
