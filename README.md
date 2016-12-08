@@ -87,4 +87,4 @@ owa attachment downloading, SYNC if no callback
 | file_path | <code>String</code> | for write stream |
 | callback |  | [optional] function |
 
-@return [Object] error property as error in SYNC, otherwise callback(error, res)
+@return [Object] error as error property in SYNC, otherwise callback(error, res)
