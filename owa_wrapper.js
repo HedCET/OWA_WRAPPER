@@ -1,124 +1,78 @@
-var _ = require('underscore'),
-  future = require('fibers/future'),
-  moment = require('moment'),
+var future = require('fibers/future'),
   request = require('request');
 
-var app = {
-  proxy_list: [],
-  timeout: 1000 * 60,
+var APP = function() {
+  this.timeout = 1000 * 60;
 };
 
-/**
- * base64_encode(input) => Base64 encoding
- *
- * @param input [String]
- * @return [String]
- */
+APP.prototype.attachment_download = function(opt, callback) {
+  var _this = this;
 
-function base64_encode(input) {
-  return new Buffer(input, 'utf8').toString('base64');
-}
+  try {
+    var f = new future,
+      write_stream = fs.createWriteStream(opt.file_path);
 
-/**
- * request(relative_url, method, form)
- *
- * @param [String] relative_url => https://ops.epo.org/3.1/[relative_url]
- * @param [String] method => npm:request.method
- * @param [Object] form => npm:request.form
- * @return [Object]
- */
+    request({
+      followAllRedirects: true,
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5',
+      },
+      jar: true,
+      method: 'GET',
+      timeout: 1000 * 60 * 15,
+      url: opt.url,
+    }).pipe(write_stream);
 
-app.request = function(relative_url, method, form) {
-  if (app.consumer_key && app.consumer_secret && app.expires_in && app.issued_at && +moment(app.issued_at, ['x']).format('X') + (+app.expires_in) - 60 < +moment().format('X')) {
-    this.signIn();
+    write_stream.on('finish', function() {
+      if (typeof callback === 'function') {
+        callback.call(_this, null, opt);
+      } else {
+        f.return(opt);
+      }
+    });
+  } catch (e) {
+    if (typeof callback === 'function') {
+      callback.call(_this, e, opt);
+    } else {
+      opt.error = e;
+
+      f.return(opt);
+    }
   }
 
+  if (typeof callback !== 'function') {
+    return f.wait();
+  }
+};
+
+APP.prototype.request = function(url, method, form) {
   var f = new future,
     opt = {
+      followAllRedirects: true,
       form: (form ? form : {}),
       headers: {
-        'Accept': 'application/json',
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0',
+        'User-Agent': 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_3_2 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8H7 Safari/6533.18.5',
       },
+      jar: true,
       method: (method ? method : 'GET'),
-      proxy: _.sample(app.proxy_list),
       timeout: app.timeout,
-      url: 'https://ops.epo.org/3.1/' + (relative_url ? relative_url : ''),
+      url: url,
     };
 
-  if (app.access_token) {
-    opt.headers.Authorization = 'Bearer ' + app.access_token;
-  } else {
-    if (app.consumer_key && app.consumer_secret && relative_url == 'auth/accesstoken') {
-      opt.headers.Authorization = 'Basic ' + base64_encode(app.consumer_key + ':' + app.consumer_secret);
-    }
-  }
-
   request(opt, function(error, res, body) {
-    if (error) {
-      f.return({ error: error, res: res, body: body });
-    } else {
-      try {
-        if (res.statusCode == 200) {
-          f.return(JSON.parse(body));
-        } else {
-          f.return({ error: body });
-        }
-      } catch (error) {
-        f.return({ error: error });
-      }
-    }
+    f.return({ error: error, res: res, body: body });
   });
 
   return f.wait();
 };
 
-/**
- * signIn(opt)
- *
- * @param opt [Object] => {consumer_key: [String], consumer_secret: [String]}
- * @return [Boolean]
- */
-
-app.signIn = function(opt) {
-  if (opt) {
-    _.each(_.pick(opt, ['consumer_key', 'consumer_secret']), function(v, k) {
-      app[k] = v;
-    });
-  }
-
-  if (app.consumer_key && app.consumer_secret) {
-    var res = this.request('auth/accesstoken', 'POST', { grant_type: 'client_credentials' });
-
-    if (res.error) {
-      console.log('[EPO_OPS_WRAPPER]', res.error);
-
-      return;
-    } else {
-      _.each(_.pick(res, ['access_token', 'api_product_list', 'application_name', 'client_id', 'developer.email', 'expires_in', 'issued_at', 'organization_name', 'scope', 'status', 'token_type']), function(v, k) {
-        app[k] = v;
-      });
-
-      return true;
-    }
-  } else {
-    console.log('[EPO_OPS_WRAPPER]', 'required consumer_key & consumer_secret');
-
-    return;
-  }
+APP.prototype.signIn = function(opt) {
+  return this.request(opt.owa_url + 'auth/owaauth.dll', 'POST', {
+    destination: opt.owa_url,
+    flags: 4,
+    password: opt.password,
+    username: opt.username,
+  });
 };
 
-/**
- * @param opt [Object] => {proxy_list: [Array of String], timeout: [Number]}
- * @return [Object]
- */
-
-module.exports = function(opt) {
-  if (opt) {
-    _.each(_.pick(opt, ['proxy_list', 'timeout']), function(v, k) {
-      app[k] = v;
-    });
-  }
-
-  return app;
-};
+module.exports = APP;
