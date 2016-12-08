@@ -1,0 +1,21 @@
+{
+  "author": "ClayIP",
+  "description": "HTTP based OWA API",
+  "dependencies": {
+    "fibers": "^1.0.15",
+    "moment": "^2.17.0",
+    "request": "^2.79.0",
+    "underscore": "^1.8.3"
+  },
+  "license": "MIT",
+  "main": "owa_wrapper.js",
+  "name": "OWA_WRAPPER",
+  "scripts": {
+    "test": "echo \"notFound\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/clayip/OWA_WRAPPER.git"
+  },
+  "version": "1.0.0"
+}
