@@ -1,5 +1,5 @@
 # OWA WRAPPER
-HTTP based Outlook Web Access for cheerio
+HTTP based Outlook Web Access
 
 ### FEATURE
 
