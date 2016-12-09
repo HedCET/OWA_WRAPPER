@@ -67,7 +67,7 @@ for owa_url, password & username based signIn
 
 @return [Object] ```{ error: error, res: res, body: body }```
 
-### .request(relative_url, method, form)
+### .request(url, method, form)
 owa SYNC http requesting
 
 | opt | type | description |
